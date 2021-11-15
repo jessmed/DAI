@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        
+        <style type="text/css">
+          .modo_nocturno { color: white;
+                           background-color: rgb(36, 36, 36); 
+          }
+        </style>
+        
+        
+        <title>{% block title %}{{title}}{% endblock %} - My Webpage</title>
+        {% block html_head %}{% endblock %}
+
+
+        <script>
+          // código jQuery que se ejecuta al cargar la página
+          $(function () {
+            // evento para cuando cambia el valor introducido en un <input id="buscar" $gt;
+            $('#buscar').change(function(){
+              let value = $(this).val()
+              console.log(value)
+
+              $.ajax({
+                
+                type : 'GET',
+                url : 'http://localhost:5000/api/movies',
+                data : { year : value },
+                
+                success : function(respuesta) {
+                  console.log(typeof(respuesta));
+                  let htmlString =''
+
+                  if (typeof(respuesta) != 'string'){
+                    
+                      htmlString += `<table border="2">
+                                        <tr>
+                                        <th>Año</th>
+                                        <th>imdb</th>
+                                        <th>Titulo</th>
+                                      </tr>`
+                    
+                      $.each(respuesta, function(k, v) {
+                        console.log(k + ' : ' + v.year + v.imdb+v.title);
+                        htmlString += `
+                                      <tr id="${v.id}">
+                                        <td> ${v.year} </td> 
+                                        <td> ${v.imdb} </td> 
+                                        <td> ${v.title} </td> 
+                                        <td><button onclick="Pulso('${v.id}')">Borrar</button></td> 
+                                      </tr>
+                                      ` 
+                      })
+                      htmlString+='</table> <br>'
+                    }
+                  else{
+                    console.log(respuesta);
+                    htmlString=respuesta
+                  }
+                  // Poner htmlString en su lugar de la página
+                  $( ".info_tabla" ).html( htmlString );
+                },
+
+                error : function(xhr, status) {
+                  alert('Disculpe, existió un problema');
+                }               
+
+              })
+            }
+            );               
+          });
+
+        function Pulso(value) {
+          // Para poner otra vez funciones jQuery en el DOM actual
+          $(function () {
+            console.log(value)
+            $( "#"+value ).hide();
+
+            //localhost:5000/api/movies/5fcb7310a999ce0ff3a38306
+            $.ajax({
+                
+                type : 'DELETE',
+                url : 'http://localhost:5000/api/movies/'+value,
+
+              })
+          });
+
+        }
+
+        function Modo() {
+            console.log("Lets go")
+            var element = document.getElementById("main");
+            element.classList.toggle("modo_nocturno");
+        }
+        </script>
+
+        
+        <script>
+          //Evitar que al pulsar enter se cambie envie el form manteniendo el Asincrono
+          $(document).ready(function() {
+              $("form").keypress(function(e) {
+                  if (e.which == 13) {
+                      return false;
+                  }
+              });
+          });
+          </script>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="mar ml-5"></div>
+            <div class="navbar-brand ml-5" href="#">Practica 8</div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                  <a class="nav-link" href="../">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                  <a class="nav-link" href="http://localhost:5000/mongo">Mongo_DataBase</a>
+                </li>
+                <li class="nav-item active">
+                  <button class="btn btn-info " onclick="Modo()">Modo Nocturno</button>
+                </li>
+
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Ejercicios
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="http://localhost:5000/ejercicios">Interfaz</a>
+                    <a class="dropdown-item" href="http://localhost:5000/ordena/71,23,12,5,38">Ejercicio 2</a>
+                    <a class="dropdown-item" href="http://localhost:5000/cribaEratostenes/27">Ejercicio 3</a>
+                    <a class="dropdown-item" href="http://localhost:5000/fibonacci/7">Ejercicio 4</a>
+                    <a class="dropdown-item" href="http://localhost:5000/checkParentesis/[][[]]][]">Ejercicio 5</a>
+                    <a class="dropdown-item" href="http://localhost:5000/regex/paco@gmail.com">Ejercicio 6</a>
+                  </div>
+
+                  {% block perfil %}
+                    {% if 'username' in session %}
+                  <li class="nav-item active">
+                    <a class="nav-link" href="http://localhost:5000/perfil">Perfil <span class="sr-only">(current)</span></a>
+                  </li>
+                  <li class="nav-item active">
+                    <a class="nav-link" href="http://localhost:5000/ajustes">Ajustes de cuenta <span class="sr-only">(current)</span></a>
+                  </li>
+                    {% endif %}
+                  {% endblock %}
+
+                </li>
+              </ul>
+                <div class="form-inline my-2 my-lg-0">
+                    {% block formulario %}
+                        {% if 'username' in session %}
+                        <h3 style="color:rgb(180, 220, 240)">Bienvenido {{session['username']}}</h3>
+                        <a href="http://localhost:5000/logout" class="btn btn-outline-success my-2 my-sm-0 ml-3" >Log out</a>
+                        {% else %}
+                        <a href="http://localhost:5000/login" class="btn btn-outline-success my-2 my-sm-0 mr-2" >Log in</a>
+                        <a href="http://localhost:5000/signin" class="btn btn-outline-success my-2 my-sm-0" >Sign in</a>
+                        {% endif %}
+                    {% endblock %}
+
+              </div>
+            </div>
+        </nav>
+
+
+        <div class="row">
+            <ul class="nav col-1 flex-column text-left bg-dark">
+                <li class="nav-item">
+                  <p class="nav-link color text-light">Links visitados</p>
+                </li>
+                <li class="nav-item">
+                  
+                    <a class="nav-link" href="{{session[link_1]}}">{{session[n_1]}}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{session[link_2]}}">{{session[n_2]}}</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{session[link_3]}}">{{session[n_3]}}</a>
+                </li>
+            </ul>
+            
+            <div class="col-11 content" id="main">
+              <form>
+                <h5 class="p-2">Películas clasificadas por año</h5>
+                <div class="form-group row p-2">
+                  <label for="staticEmail" class="p-2 col-form-label">Buscar</label>
+                  <input type="text" class="col-sm-5form-control"  id="buscar" placeholder="2016">
+                  
+                </div>
+              </form>
+
+              <div class="info_tabla">
+
+              </div>
+
+              
+
+              {% block content %}
+                  {% if pokemons %}
+                    <br>
+                    <h3 class="ml-3">Lista de Pokemons</h3>
+                    <p class="ml-3">A continuación se muestra una lista de los pokemons registrados:</p>
+                    <div class="m-3">
+                      {% for poke in pokemons %}
+                        {{ poke }} <strong> # </strong>
+                      {% endfor %}
+                    </div>
+                    <br>
+
+                    
+                    <div class="row ">
+                      <div class="col-6">
+                        <h3 class="ml-3">Búsqueda Pokemon</h3>
+                        <p class="ml-3">Busca un Pokemon para conocer todos sus datos</p>
+    
+                        <form class="form-inline" method="post">
+                          <div class="form-group">
+                            <label for="name" class="ml-3"><strong>Nombre Pokemon</strong></label>
+                            <input type="text" name="name" class="form-control m-3" id="name">
+                          </div>
+                          <button type="submit" class="btn btn-dark">Buscar</button>
+                        </form>
+                        <br>
+                      </div>
+                  
+
+                      <div class="col-6">
+                        {% if msg%}
+                          {% for m in msg %}
+                            <div>
+                              <p><strong>Nombre:</strong> {{ m.name}} </p>
+                              <p><strong>Número:</strong> {{ m.num }} </p>
+                              <p><strong>Tipo:</strong> {{ m.type }} </p>
+                              <p><strong>Altura:</strong> {{ m.height }} </p>
+                              <p><strong>Peso:</strong> {{ m.weight }} </p>
+                              <p><strong>Debilidad:</strong> {{ m.weaknesses }} </p>
+                              <img src={{m.img}}>
+
+                            </div>
+                          {% endfor %}
+                        {% endif %}
+
+                        {% if error_p%}
+                          <p class="error m-3"><strong>Error: </strong>{{ error_p }}</p>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-6">
+                        <h3 class="ml-3">Añadir Pokemon</h3>
+                        <p class="ml-3">Introduce nombre de Pokemon para añadirlo a la base de datos</p>
+    
+                        <form class="form-inline" method="post">
+                          <div class="form-group">
+                            <label for="name_a" class="ml-3"><strong>Nombre Pokemon</strong></label>
+                            <input type="text" name="name_a" class="form-control m-3" id="name_a">
+                          </div>
+                          <button type="submit" class="btn btn-info">Añadir</button>
+                        </form>
+                        <br>    
+                      </div>
+                      
+                      <div class="col-6">
+                        {% if msg_a%}
+                            <div>
+                              <p><strong>{{ msg_a }} </strong> </p>
+                              
+                            </div>
+                        {% endif %}
+
+                        {% if error_a%}
+                          <p class="error m-3"><strong>Error:</strong>{{ error_a }}</p>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-6">
+                        <h3 class="ml-3">Borrar Pokemon</h3>
+                        <p class="ml-3">Introduce un Pokemon para borrarlo de la base de datos</p>
+    
+                        <form class="form-inline" method="post">
+                          <div class="form-group">
+                            <label for="name_d" class="ml-3"><strong>Nombre Pokemon</strong></label>
+                            <input type="text" name="name_d" class="form-control m-3" id="name_d">
+                          </div>
+                          <button type="submit" class="btn btn-danger">Borrar</button>
+                        </form>
+                        <br>    
+                      </div>
+
+                      <div class="col-6">
+                        {% if msg_d%}
+                            <div>
+                              <p><strong>{{ msg_d }} </strong> </p>
+                              
+                            </div>
+                        {% endif %}
+
+                        {% if error_d%}
+                          <p class="error m-3"><strong>Error:</strong>{{ error_d }}</p>
+                        {% endif %}
+                      </div>                 
+                    </div>
+
+                    <div class="row">
+                      <div class="col-6">
+                        <h3 class="ml-3">Modificar Pokemon</h3>
+                        <p class="ml-3">Introduce valores de un Pokemon para modificarlo en la base de datos</p>
+    
+                        <form class="form" method="post">
+                          <div class="form-group">
+                            <label for="modname" class="ml-3"><strong>Nombre Pokemon</strong></label>
+                            <input type="text" name="modname" class="form-control m-3 col-5" id="modname">
+                            <label for="height" class="ml-3"><strong>Altura</strong></label>
+                            <input type="text" name="height" class="form-control m-3 col-5" id="height" placeholder="Ej: 1.43 m">
+                            <label for="weight" class="ml-3"><strong>Peso</strong></label>
+                            <input type="text" name="weight" class="form-control m-3 col-5" id="weight" placeholder="Ej: 3.43 kg">
+                          </div>
+                          <button type="submit" class="btn btn-warning ml-3">Modificar</button>
+                        </form>
+                        <br>    
+                      </div>
+
+                      <div class="col-6">
+                        {% if msg_m%}
+                            <div>
+                              <p><strong>{{ msg_m }} </strong> </p>
+                              
+                            </div>
+                        {% endif %}
+
+                        {% if error_m%}
+                          <p class="error m-3"><strong>Error:</strong>{{ error_m }}</p>
+                        {% endif %}
+                      </div>                  
+                    </div>
+
+                  {% endif %}
+              {% endblock %}
+            </div>
+
+        </div>
+        
+
+
+      
+        <div class="footer bg-dark text-light text-center py-3">
+          Desarrollo de Aplicaciones para Internet (DAI) Copyright 2020&copy; 
+        </div>
+       
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    </body>
+</html>
