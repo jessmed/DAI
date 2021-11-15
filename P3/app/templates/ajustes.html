@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Cambiar datos de la cuenta</h1>
+  {% if error %}
+  <p class="error"><strong>Error:</strong> {{ error }}
+  {% endif %}
+  
+  <form method="post">
+    <p> Nombre:</p>
+    <p><input type="text" name="username" value="" placeholder="{{session['username']}}"></p>
+    <p> Contraseña:</p>
+    <p><input type="password" name="password" placeholder="{{session['password']}}"></p>
+    <p><input type="submit" value="Guardar cambios"></p>
+  </form>
+{% endblock %}
