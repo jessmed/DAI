@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Lista de libros <a href="{% url 'libro_nuevo' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a> </h1>
+
+    {% if libros %}
+    <ul>
+
+      {% for libro in libros %}
+      <li>
+        <p>{{ libro.titulo }} ({{libro.autor}}) 
+          <a href="./edit/{{ libro.id }}">Editar</a>
+          <a href="./borrar/{{ libro.id }}" onClick="return confirm('¿Seguro que quieres borrar a {{libro.nombre}}?');">
+            Borrar</a>
+        </p>
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% endif %} 
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Biblioteca</h1>
+        <p class="lead">La forma más fácil de coger prestado un libro</p>
+            <section id="auth-button" style="padding:5px 0 10px;float:right;"></section>
+            <div id="guts" style="width: 100%; float:left; background-color:#888888; padding:0 10px 0 10px;">
+                <a href="{% url 'libro' %}" style="color: aliceblue;">Libros disponibles</a><br>
+                <a href="{% url 'prestamo' %}" style="color: aliceblue;">Préstamos actuales</a>  
+            </div>
+
+
+{% endblock %}
