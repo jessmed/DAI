@@ -1,0 +1,14 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Biblioteca</h1>
+        <p class="lead">La forma más fácil de coger prestado un libro</p>
+        
+        <div id="guts" style="width: 100%; float:left; background-color:#888888; padding:0 10px 0 10px;">
+            <a href="{% url 'login' %}" style="color: aliceblue;">Identificate</a><br>
+            <a href="{% url 'register' %}" style="color: aliceblue;">Registrate</a>  
+        </div>
+
+
+{% endblock %}

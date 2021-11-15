@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Biblioteca</h1>
+        <p class="lead">La forma más fácil de coger prestado un libro</p>
+            
+            <div id="guts" style="width: 100%; float:left; background-color:#888888; padding:0 10px 0 10px;">
+                <a href="{% url 'libro' %}" style="color: aliceblue;">Libros disponibles</a><br>
+                <a href="{% url 'prestamo' %}" style="color: aliceblue;">Préstamos actuales</a>  
+            </div>
+    
+    
+    
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-3d.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <div class="space"><br> </br> </div>
+    <h2>Estadísticas</h2>
+        
+    <div class="row">
+        <div class="col-md-6">
+            
+            <figure class="highcharts-figure">
+                <div id="container"></div>
+                
+                <script>
+                Highcharts.chart('container', {
+                    chart: {
+                    type: 'column',
+                    options3d: {
+                        enabled: true,
+                        alpha: 10,
+                        beta: 25,
+                        depth: 70
+                    }
+                    },
+                    title: {
+                    text: 'Media de prestamos por mes'
+                    },
+                    subtitle: {
+                    text: 'Media realizada con datos del período 2010-2020\r (en Agosto la biblioteca permanece cerrada)'
+                    },
+                    plotOptions: {
+                    column: {
+                        depth: 25
+                    }
+                    },
+                    xAxis: {
+                    categories: Highcharts.getOptions().lang.shortMonths,
+                    labels: {
+                        skew3d: true,
+                        style: {
+                        fontSize: '16px'
+                        }
+                    }
+                    },
+                    yAxis: {
+                    title: {
+                        text: null
+                    }
+                    },
+                    series: [{
+                    name: 'Número de préstamos',
+                    data: [150, 108, 192, 200, 210, 120, 180, 0, 230, 155]
+                    }]
+                });
+                </script>
+            </figure>
+        </div>
+
+        <div class="col-md-6">
+            <figure class="highcharts-figure">
+                <div id="container2"></div>
+
+                <script>
+                    Highcharts.chart('container2', {
+                        chart: {
+                            type: 'pie',
+                            options3d: {
+                                enabled: true,
+                                alpha: 45,
+                                beta: 0
+                            }
+                        },
+                        title: {
+                            text: 'Géneros más populares'
+                        },
+                        accessibility: {
+                            point: {
+                                valueSuffix: '%'
+                            }
+                        },
+                        tooltip: {
+                            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                        },
+                        plotOptions: {
+                            pie: {
+                                allowPointSelect: true,
+                                cursor: 'pointer',
+                                depth: 35,
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '{point.name}'
+                                }
+                            }
+                        },
+                        series: [{
+                            type: 'pie',
+                            name: 'Género libros prestados',
+                            data: [
+                                ['Ciencia ficción', 45.0],
+                                ['Aventura', 26.8],
+                                {
+                                    name: 'Suspense',
+                                    y: 12.8,
+ 
+                                },
+                                ['Amor', 8.5],
+                                ['Biografía', 6.2],
+                                ['Otros', 0.7]
+                            ]
+                        }]
+                    });
+                </script>
+            </figure>
+        </div>
+    </div>
+        <h2>Localización de bibliotecas</h2>
+        <div id="map"></div>
+        <script>
+            var map = L.map('map').setView([51.505, -0.09], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            L.control.scale().addTo(map);
+            var marker = L.marker([37.16, -3.6]).addTo(map);
+            var marker2 = L.marker([37.2, -3.6]).addTo(map);
+
+            marker.bindPopup("<b>Biblioteca Sur").openPopup();
+            marker2.bindPopup("<b>Biblioteca Norte").openPopup();
+        </script>
+
+        <div class="sp"><br></br></div>
+    
+    
+
+{% endblock %}

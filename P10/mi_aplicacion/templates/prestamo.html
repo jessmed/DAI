@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Lista de prestamos <a href="{% url 'prestamo_nuevo' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a></h1>
+
+    {% if prestamos %}
+    <ul>
+
+      {% for prestamo in prestamos %}
+      <li>
+        <p>{{ prestamo.libro }} ({{prestamo.fecha}}) ({{prestamo.usuario}})
+          {% if perms.catalog.can_mark_returned %}
+          <a href="./edit/{{ prestamo.id }}">Editar</a>
+          <a href="./borrar/{{ prestamo.id }}" onClick="return confirm('¿Seguro que quieres borrar a {{libro.nombre}}?');">
+            Borrar</a>
+          {% endif %}
+        </p>
+      </li>
+      {% endfor %}
+
+    </ul>
+    {% endif %} 
+{% endblock %}
